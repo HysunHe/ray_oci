@@ -67,6 +67,12 @@ def _import_vsphere(provider_config):
     return VsphereNodeProvider
 
 
+def _import_oci(provider_config):
+    from ray.autoscaler._private.oci.node_provider import OCINodeProvider
+
+    return OCINodeProvider
+
+
 def _import_local(provider_config):
     if "coordinator_address" in provider_config:
         from ray.autoscaler._private.local.coordinator_node_provider import (
@@ -188,6 +194,12 @@ def _load_aliyun_defaults_config():
     return os.path.join(os.path.dirname(ray_aliyun.__file__), "defaults.yaml")
 
 
+def _load_oci_defaults_config():
+    import ray.autoscaler.oci as ray_oci
+
+    return os.path.join(os.path.dirname(ray_oci.__file__), "defaults.yaml")
+
+
 def _import_external(provider_config):
     provider_cls = load_function_or_class(path=provider_config["module"])
     return provider_cls
@@ -207,6 +219,7 @@ _NODE_PROVIDERS = {
     "aliyun": _import_aliyun,
     "external": _import_external,  # Import an external module
     "spark": _import_spark,
+    "oci": _import_oci,
 }
 
 _PROVIDER_PRETTY_NAMES = {
@@ -222,6 +235,7 @@ _PROVIDER_PRETTY_NAMES = {
     "aliyun": "Aliyun",
     "external": "External",
     "vsphere": "vSphere",
+    "oci": "OCI",
 }
 
 _DEFAULT_CONFIGS = {
@@ -234,6 +248,7 @@ _DEFAULT_CONFIGS = {
     "aliyun": _load_aliyun_defaults_config,
     "kubernetes": _load_kubernetes_defaults_config,
     "vsphere": _load_vsphere_defaults_config,
+    "oci": _load_oci_defaults_config,
     "readonly": _load_read_only_defaults_config,
 }
 
